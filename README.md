@@ -1,1 +1,1 @@
-# post-type-header-code
+# post-type-head-code

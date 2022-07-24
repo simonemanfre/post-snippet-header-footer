@@ -1,0 +1,50 @@
+button,
+textarea,
+input[type="text"],
+input[type="button"],
+input[type="submit"] {
+  border-radius: 0;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.c-post-snippet + .c-post-snippet {
+  margin-top: 32px;
+}
+.c-post-snippet label {
+  display: block;
+  margin-bottom: 16px;
+}
+.c-post-snippet textarea::-moz-placeholder {
+  color: #757575;
+  font-family: Menlo, Consolas, monaco, monospace;
+  font-size: 14px;
+  opacity: 1;
+}
+.c-post-snippet textarea:-ms-input-placeholder {
+  color: #757575;
+  font-family: Menlo, Consolas, monaco, monospace;
+  font-size: 14px;
+  opacity: 1;
+}
+.c-post-snippet textarea::-webkit-input-placeholder {
+  color: #757575;
+  font-family: Menlo, Consolas, monaco, monospace;
+  font-size: 14px;
+  opacity: 1;
+}
+.c-post-snippet textarea {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  height: 200px;
+  font-family: Menlo, Consolas, monaco, monospace;
+  font-size: 14px;
+  padding: 18px 16px;
+  border: 1px solid #bdbdbd;
+  outline: none;
+}
+.c-post-snippet textarea:focus {
+  border-color: #000;
+  box-shadow: 0 0 0 1px #000;
+}

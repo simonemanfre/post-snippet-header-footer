@@ -1,7 +1,6 @@
 <?php 
 /**
  * Plugin Name: Post Snippet - Insert Header e Footer Code in Page, Post and Post Type
- * Plugin URI: https://www.wpcode.com/
  * Version: 1.0.0
  * Requires at least: 4.6
  * Requires PHP: 5.5

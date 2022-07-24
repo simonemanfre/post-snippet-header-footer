@@ -20,8 +20,18 @@ GNU General Public License for more details.
 
 defined( 'ABSPATH' ) || exit; // Exit if accessed directly
 
+define( 'POST_SNIPPET_FILE', __FILE__ );
+
+define( 'POST_SNIPPET_PLUGIN_URL', plugin_dir_url( POST_SNIPPET_FILE ) );
+
+//ADMIN STYLE E SCRIPT
+function admin_scripts() {
+    wp_enqueue_style( 'post-snippet-admin', POST_SNIPPET_PLUGIN_URL . '/assets/css/post-snippet-admin.css', array(), null);
+}
+add_action( 'admin_enqueue_scripts', 'admin_scripts' );
+
 //ADD METABOX
-function add_head_snippet_metabox() {
+function add_post_snippet_metabox() {
 	//get all post types
     $post_types = get_post_types( array( 'publicly_queryable' => true,'public' => true ) );
 
@@ -34,26 +44,30 @@ function add_head_snippet_metabox() {
     $screens = array_merge( array( 'page' ), $post_types );
     foreach ( $screens as $screen ):
         add_meta_box(
-            'head_snippet',
-            'Head Snippet',
-            'head_snippet_metabox_callback',
+            'post_snippet',
+            'Post Snippet',
+            'post_snippet_metabox_callback',
             $screen,
             'normal',
             'default',
         );
     endforeach;
 }
-add_action( 'add_meta_boxes', 'add_head_snippet_metabox' );
+add_action( 'add_meta_boxes', 'add_post_snippet_metabox' );
 
-function head_snippet_metabox_callback($post) {
-    wp_nonce_field( 'head_snippet', 'post_type_head_snippet' );
+function post_snippet_metabox_callback($post) {
+    wp_nonce_field( 'post_snippet', 'post_type_snippet' );
 ?>
 
-    <div>
-		<label for="head_code">Add custom code to HEAD section</label>
-		<br />
-		<textarea name="head_code" id="head_code"><?php echo esc_attr( get_post_meta( $post->ID, 'head_code', true ) ); ?></textarea>
-	</div>
+    <section class="c-post-snippet">
+		<label for="post_snippet_head">Add custom code to the HEAD section</label>
+		<textarea name="post_snippet_head" id="post_snippet_head" placeholder="Type code here..."><?php echo esc_attr( get_post_meta( $post->ID, 'post_snippet_head', true ) ); ?></textarea>
+	</section>
+
+    <section class="c-post-snippet">
+		<label for="post_snippet_footer">Add custom code to the FOOTER section</label>
+		<textarea name="post_snippet_footer" id="post_snippet_footer" placeholder="Type code here..."><?php echo esc_attr( get_post_meta( $post->ID, 'post_snippet_footer', true ) ); ?></textarea>
+	</section>
 
 <?php
 }
@@ -62,14 +76,14 @@ function head_snippet_metabox_callback($post) {
 function save_head_snippet_metabox( $post_id, $post ) {
 
     // Verify the nonce
-	if ( ! isset( $_POST['post_type_head_snippet'] ) || ! wp_verify_nonce( $_POST['post_type_head_snippet'], 'head_snippet' ) )
+	if ( ! isset( $_POST['post_type_snippet'] ) || ! wp_verify_nonce( $_POST['post_type_snippet'], 'post_snippet' ) )
         return;
 
 	$post_type = get_post_type_object( $post->post_type );
 	if ( !current_user_can( $post_type->cap->edit_post, $post_id ) )
 		return;
 
-    $meta_fields = array('head_code');
+    $meta_fields = array('post_snippet_head', 'post_snippet_footer');
     foreach ($meta_fields as $field):
         $new_meta_value = ( isset(  $_POST[$field] ) ?  $_POST[$field] : '' );
 
@@ -93,17 +107,30 @@ function save_head_snippet_metabox( $post_id, $post ) {
 }
 add_action( 'save_post', 'save_head_snippet_metabox', 10, 2 );
 
-
 //PRINT SNIPPET IN HEAD
-add_action('wp_head', 'print_head_snippet');
-function print_head_snippet(){
+add_action('wp_head', 'print_post_snippet_head');
+function print_post_snippet_head(){
 
     if(is_singular()):
 
-        $head_snippet = get_post_meta(get_the_ID(), 'head_code', true);
+        $head_snippet = get_post_meta(get_the_ID(), 'post_snippet_head', true);
 
         if($head_snippet):
-            echo "<script>{$head_snippet}</script>";
+            echo $head_snippet;
+        endif;
+    endif;
+}
+//PRINT SNIPPET IN FOOTER
+
+add_action('wp_footer', 'print_post_snippet_footer', 20);
+function print_post_snippet_footer(){
+
+    if(is_singular()):
+
+        $footer_snippet = get_post_meta(get_the_ID(), 'post_snippet_footer', true);
+
+        if($footer_snippet):
+            echo $footer_snippet;
         endif;
     endif;
 }

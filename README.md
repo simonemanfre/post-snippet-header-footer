@@ -1,1 +1,2 @@
-# post-type-head-code
+# post-snippet-header-footer
+
